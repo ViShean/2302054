@@ -30,7 +30,8 @@ async function submitSearch(term) {
   const driver = await new Builder()
     .forBrowser("chrome")
     .usingServer(SELENIUM_HUB)
-    .setChromeOptions(new Options().headless())
+    // ✅ CORRECT
+    .setChromeOptions(new Options().addArguments("--headless"))
     .build();
 
   try {
