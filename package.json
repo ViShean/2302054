@@ -5,14 +5,14 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "mocha tests/*.js",
+    "test": "mocha tests/ui-test.mjs",
     "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chai": "^5.2.1",
+    "chai": "^4.5.0",
     "chai-http": "^5.1.2",
     "express": "^5.1.0",
     "express-basic-auth": "^1.2.1",
