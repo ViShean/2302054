@@ -1,7 +1,7 @@
 // tests/ui-test.mjs
 /* eslint-env mocha */
 
-import chai from "chai"; // default export now exists (CommonJS pkg)
+import * as chai from "chai"; // ✅ CORRECT
 import chaiHttp from "chai-http";
 import { server } from "../server.js"; // server.js exports { app, server }
 

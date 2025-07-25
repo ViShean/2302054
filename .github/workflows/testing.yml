@@ -90,12 +90,12 @@ jobs:
 
       - name: Start Node.js server
         run: |
-          nohup node src/server.js &  # Start the server in the background
+          nohup node server.js &  # Start the server in the background
           sleep 5  # Give the server some time to start
 
       - name: Verify server is running ##TODO: CHANGE PORT IF NEEDED
         run: |
-          curl -f http://localhost:3350 || { echo "Server failed to start"; exit 1; }
+          curl -f http://testserver:3350 || { echo "Server failed to start"; exit 1; }
 
       - name: Wait for Selenium server to be up ##TODO: Change the SELENIUM_STATUS to the correct URL
         run: |
