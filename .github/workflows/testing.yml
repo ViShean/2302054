@@ -81,7 +81,7 @@ jobs:
           echo "Files in the current directory:"
           ls -ltra .
           echo "Files in the src directory:"
-          ls -ltra src/
+          ls -ltra 
           echo "Files in the tests directory:"
           ls -ltra tests/
 
