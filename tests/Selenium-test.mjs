@@ -3,9 +3,7 @@
 
 import { Builder, By, until } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js"; // ← note “.js”
-import chai, { expect } from "chai";
-
-chai.should(); // optional, keeps chai initialised
+import { expect } from "chai";
 
 const SELENIUM_HUB = "http://localhost:4444/wd/hub";
 const APP_URL = "http://localhost:3350/";
