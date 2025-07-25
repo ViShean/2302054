@@ -1,51 +1,84 @@
-// tests/selenium-test.mjs
-/* eslint-env mocha */
+/* tests/selenium-search.mjs
+   Stand-alone Selenium test for the secure-search form                */
 
 import { Builder, By, until } from "selenium-webdriver";
-import { Options } from "selenium-webdriver/chrome.js"; // ← note “.js”
-import { expect } from "chai";
+import { Options } from "selenium-webdriver/chrome.js";
+import assert from "node:assert/strict";
 
-const SELENIUM_HUB = "http://localhost:4444/wd/hub";
-const APP_URL = "http://localhost:3350/";
+/* ------------------------------------------------------------------ */
+/*  Environment detection                                             */
+/* ------------------------------------------------------------------ */
+const ENV = process.argv[2] ?? "local";
+const SELENIUM_HUB =
+  ENV === "github"
+    ? "http://selenium:4444/wd/hub"
+    : "http://localhost:4444/wd/hub";
 
-async function runSearch(term) {
-  // headless Chrome options
-  const chromeOpts = new Options().headless();
+const APP_URL =
+  ENV === "github"
+    ? "http://testserver:3350/" // ↖ change if your container uses a different port/name
+    : "http://localhost:3350/";
 
+console.log(`Running Selenium test in “${ENV}” mode`);
+console.log(`  Hub:   ${SELENIUM_HUB}`);
+console.log(`  App:   ${APP_URL}`);
+
+/* ------------------------------------------------------------------ */
+/*  Helper to execute one search attempt                              */
+/* ------------------------------------------------------------------ */
+async function submitSearch(term) {
   const driver = await new Builder()
     .forBrowser("chrome")
     .usingServer(SELENIUM_HUB)
-    .setChromeOptions(chromeOpts)
+    .setChromeOptions(new Options().headless())
     .build();
 
   try {
     await driver.get(APP_URL);
+
+    // fill the form and submit
     await driver.findElement(By.id("term")).sendKeys(term);
     await driver.findElement(By.css('button[type="submit"]')).click();
 
-    // wait until either success <h1> or red error banner appears
-    await driver.wait(
+    // wait for either success <h1> or error <p style="color:red"> banner
+    const node = await driver.wait(
       until.elementLocated(By.css('h1, p[style*="color:red"]')),
       3_000
     );
-
-    return driver.getPageSource();
+    return {
+      html: await driver.getPageSource(),
+      nodeText: await node.getText(),
+    };
   } finally {
     await driver.quit();
   }
 }
 
 /* ------------------------------------------------------------------ */
-/*  Tests                                                             */
+/*  Test case 1 – safe input                                          */
 /* ------------------------------------------------------------------ */
-describe("Secure Search – Selenium flow", () => {
-  it("shows the result page for safe input", async () => {
-    const page = await runSearch("selenium rocks");
-    expect(page).to.include("You searched for: selenium rocks");
-  });
+console.log("→ 1/2  Verifying safe input flow…");
+{
+  const { nodeText } = await submitSearch("hello world");
+  assert.ok(
+    nodeText.includes("You searched for: hello world"),
+    "Safe input was not echoed back as expected"
+  );
+  console.log("   ✓ safe input passes");
+}
 
-  it("displays validation banner for XSS payload", async () => {
-    const page = await runSearch("<img src=x onerror=alert(1)>");
-    expect(page).to.include("Potential XSS detected.");
-  });
-});
+/* ------------------------------------------------------------------ */
+/*  Test case 2 – XSS payload                                         */
+/* ------------------------------------------------------------------ */
+console.log("→ 2/2  Verifying XSS defence…");
+{
+  const { nodeText } = await submitSearch("<script>alert(1)</script>");
+  assert.ok(
+    /Potential XSS detected/i.test(nodeText),
+    "XSS banner not displayed for malicious payload"
+  );
+  console.log("   ✓ XSS payload rejected");
+}
+
+console.log("\n🎉  All Selenium checks passed.");
+process.exit(0);
