@@ -63,4 +63,4 @@ app.post("/search", (req, res) => {
 app.listen(3350, "0.0.0.0", () =>
   console.log("Server running at http://127.0.0.1:3350")
 );
-module.exports = { validateInput, server };
+module.exports = app; 

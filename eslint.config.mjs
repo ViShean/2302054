@@ -10,4 +10,12 @@ export default defineConfig([
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
   { files: ["**/*.js"], languageOptions: { sourceType: "commonjs" } },
+  {
+    files: ["tests/**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: {
+        ...globals.mocha, // Apply mocha globals only to tests
+      },
+    },
+  },
 ]);
