@@ -1,0 +1,27 @@
+{
+  "name": "2302054",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha tests/*.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-basic-auth": "^1.2.1",
+    "mocha": "^11.7.1",
+    "selenium-webdriver": "^4.34.0",
+    "validator": "^13.15.15"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.31.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-no-unsanitized": "^4.1.2",
+    "eslint-plugin-security": "^3.0.1",
+    "globals": "^16.3.0"
+  }
+}
