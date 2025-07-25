@@ -1,22 +1,18 @@
-// tests/search.spec.js
 /* eslint-env mocha */
-const chai = require("chai");
-const { expect } = chai;
-const chaiHttp = require("chai-http");
-const { createServer } = require("http");
 
+import * as chai from "chai"; // namespace import –> gives us chai.request(..)
+import { expect } from "chai"; // named import –> clean “expect(…)” syntax
+import chaiHttp from "chai-http";
+
+import { server } from "../server.js"; // server.js must `export { app, server }`
+
+// plug chai-http into chai
 chai.use(chaiHttp);
-
-const app = require("../server");
-const server = createServer(app);
-
-before((done) => server.listen(3351, done));
-after((done) => server.close(done));
 
 describe("POST /search", () => {
   it("accepts safe input and echoes it", async () => {
     const res = await chai
-      .request(server)
+      .request(server) // hit the already-running server
       .post("/search")
       .type("form")
       .send({ term: "hello world" });
@@ -32,7 +28,7 @@ describe("POST /search", () => {
       .type("form")
       .send({ term: "<script>alert(1)</script>" });
 
-    expect(res).to.have.status(200); // page reloads with error banner
+    expect(res).to.have.status(200);
     expect(res.text).to.include("⚠️ Potential XSS detected.");
   });
 
@@ -46,4 +42,11 @@ describe("POST /search", () => {
     expect(res).to.have.status(200);
     expect(res.text).to.include("⚠️ Potential SQL-Injection detected.");
   });
+});
+
+/* --------------------------------------------------------------- */
+/*  tidy-up                                                        */
+/* --------------------------------------------------------------- */
+after(() => {
+  server.close(); // shut down the listener started in server.js
 });
