@@ -104,4 +104,4 @@ jobs:
           done
 
       - name: Run Selenium tests
-        run: mocha tests/Selenium-test.mjs github ##TODO: Change naeg of test file if needed
+        run: node tests/Selenium-test.mjs github ##TODO: Change naeg of test file if needed
