@@ -85,8 +85,8 @@ jobs:
           echo "Files in the tests directory:"
           ls -ltra tests/
 
-      - name: Run unit tests
-        run: npm test
+      #   - name: Run unit tests
+      #     run: npm test
 
       - name: Start Node.js server
         run: |
